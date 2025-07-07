@@ -1,0 +1,548 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <link rel="stylesheet" href="{% static 'shop/css/styles.css' %}">
+
+ <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+ <title>SkinCare Homepage</title>
+</head>
+<style>
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed;
+  z-index: 999;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  width: 300px;
+  margin: 100px auto;
+  border-radius: 10px;
+  position: relative;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px; right: 15px;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* Modal Overlay */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(5px);
+}
+
+/* Modal Content Box */
+.modal-content {
+  background: #fff;
+  margin: 80px auto;
+  padding: 30px 25px;
+  width: 90%;
+  max-width: 400px;
+  border-radius: 16px;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+  position: relative;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+input {
+  width:  100%;
+  padding: .6rem;
+  margin-bottom: .5em;
+  outline: none;
+  border-radius: 5px;
+  align-items: center;
+  border: none;
+  border: 1px solid gray;
+
+}
+/* Close Button */
+.close-btn {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  font-size: 24px;
+  color: #999;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.close-btn:hover {
+  color: #333;
+}
+
+
+ 
+.blog-1 h3{
+  text-align: center;
+}
+
+
+
+.modal-content h2{
+ text-align:  center;
+ font-size: 1.6rem;
+ margin-bottom: 1em;
+} 
+
+.modal-content button{
+  width: 100%;
+  border-radius: 5px;
+  border: 0;
+  margin-top: .4rem;
+  padding: .5em;
+    transition: background 0.3s ease;
+    background-color:  #0f766e;
+    margin-bottom: .4em;
+
+}
+
+.modal-content p {
+  text-align: center;
+  font-size: .8rem;
+}
+
+</style>
+
+</style>
+<body>
+ 
+ <header>
+
+<nav>
+ <a href="{% url 'homepage' %}" class="active">Home</a>
+  <a href="{% url 'productpage' %}">Shop</a>
+  <a href="#">Blog</a>
+  <a href="{% url 'signin' %}">Products</a>
+  <a href="#">About</a>
+</nav>
+   <h5><span>Gli</span>sty</h5>
+
+   <div class="icons">
+    <i class='bx bx-search'></i>
+    <i id="cartToggle"  class='bx bx-cart addcart' ><span>0</span></i>
+    <i class='bx bx-sun'></i>
+    <i class='bx bxs-user' id="userIcon"></i>
+   </div>
+</header>
+   <!-- main wrapper -->
+
+<div class="main">
+   <!-- First div for th left side -->
+
+ <div class="content">
+  <!-- for text content -->
+  <div class="text">
+   <h4>Glow Naturally with</h4>
+   <h1>Glisty Skincare</h1>
+   <p>Discover our all Natural , Gruety-Free skincare Products</p>
+
+    <div class="shop-products">
+     <a href="{% url 'signin' %}" id="toSignin">Shop Now</a><span><i class='bx bx-right-arrow-alt'></i>
+
+</span>
+    </div>
+  </div>
+ </div>
+
+ <div class="imge-box">
+  <div class="image">
+    <img src="{% static 'shop/images/homepageimag.png' %}" alt="Homepage skin care image" >
+  </div>
+
+ </div>
+</div>
+
+
+
+
+
+ <div class="main-2">
+  <div class="images image-scroll">
+     <img src="{% static 'shop/images/ChatGPT Image Jun 27, 2025, 12_37_06 AM.png' %}" alt="" >
+   
+
+  </div>
+  <div class="description text-scroll">
+  <h4>Naturally <span>Radiant Skincare</span> </h4>
+ <p>At Glisty, we believe that true beauty begins with nature. Our mission is to provide high-quality, natural skincare products that nourish, protect, and enhance your skin—regardless of type, tone, or texture.<br>
+
+Crafted with care and inspired by the healing power of nature, each product is made using plant-based ingredients, free from harsh chemicals, and designed to support your skin's natural glow. Whether you're managing dryness, sensitivity, or just looking for a gentle daily routine, Glisty offers clean, effective solutions for every skin type.</p>
+
+
+  </div>
+
+
+ </div>
+
+ <div class="main-3">
+
+  <div class="serum-text text-top">
+    <h3>Offer</h3>
+    <h4> GET  <span>30%</span> off on Glisty serum</h4>
+    <div class="calltoaction">
+       <a href="{% url 'product-detail' 1 %}">Get your Glisty serum Now</a>
+        <i class='bx bx-right-arrow-alt'></i>
+    </div>
+
+  </div>
+  <div class="serum-image image-top">
+     <img src="{% static 'shop/images/serum1.webp' %}" alt="" >
+  </div>
+   
+ </div>
+ <div class="section">
+  <div class="topic">
+      <h3>Most Popular Products</h3>
+  </div>
+
+      <div class="img-bx">
+     <div  class="box  product" >
+      <img src="{% static 'shop/images/display-serum1.jpg' %}" alt="" onclick="window.location.href='#'" id="toSignup"> 
+     <h4>Aloe serum </h4>
+     <div class="price">
+      <div class="priceandcart">
+         <p>$440</p>
+            <button class="cart" >Add to cart</button>        
+      </div>
+     
+
+      <i class='bx bxs-star'></i>
+      <i class='bx bxs-star'></i>
+      <i class='bx bxs-star'></i>
+      <i class='bx bxs-star'></i>
+      <i class='bx bxs-star'></i>
+
+     </div>
+     </div>
+
+     <div class="box product"  >
+       <img src="{% static 'shop/images/mensproduct.jpg' %}" alt="" onclick="window.location.href='#'" id="toSignup">
+     <h4>Velvah Men's Grooming Kit</h4>
+     <div class="price">
+<div class="priceandcart">
+         <p>$440</p>
+            <button class="cart" >Add to cart</button>        
+      </div>    
+ <i class='bx bxs-star'></i>
+      <i class='bx bxs-star'></i>
+      <i class='bx bxs-star'></i>
+      <i class='bx bxs-star'></i>  
+       <i class='bx bxs-star'></i>
+
+       </div>
+     </div>
+
+     <div class="box product" >
+      <img src="{% static 'shop/images/tonners.jpg' %}" alt=""  onclick="window.location.href='#'" id="toSignup">
+     <h4>Velvah Men's Grooming Kit </h4>
+     <div class="price">
+<div class="priceandcart">
+         <p>$440</p>
+            <button class="cart" >Add to cart</button>        
+      </div>    <i class='bx bxs-star'></i>
+      <i class='bx bxs-star'></i>
+      <i class='bx bxs-star'></i>
+      <i class='bx bxs-star'></i>   
+      <i class='bx bxs-star-half' ></i>
+       </div>
+     </div>
+
+     <div class="box product" >
+      <img src="{% static 'shop/images/soap.jpg' %}" alt=""   onclick="window.location.href='#'" id="toSignup">
+     <h4>
+      Monarch Cinnabari Skincare</h4>
+     <div class="price">
+<div class="priceandcart">
+         <p>$440</p>
+            <button class="cart" >Add to cart</button>        
+      </div>    <i class='bx bxs-star'></i>
+      <i class='bx bxs-star'></i>
+      <i class='bx bxs-star'></i>
+      <i class='bx bxs-star'></i>    
+              <i class='bx bxs-star'></i>
+
+     </div>
+     </div>
+
+     <div class="box product" >
+      <img src="{% static 'shop/images/scrapingbag.jpg' %}" alt="" onclick="window.location.href='#'" id="toSignup">
+     <h4>Exfoliating brush </h4>
+     <div class="price">
+<div class="priceandcart">
+         <p>$440</p>
+            <button class="cart" >Add to cart</button>        
+      </div> <i class='bx bxs-star'></i>
+      <i class='bx bxs-star'></i>
+      <i class='bx bxs-star'></i>
+      <i class='bx bxs-star'></i>  
+      <i class='bx bxs-star-half' ></i> 
+       </div>
+     </div>
+      </div>
+
+    
+
+ </div>
+
+ <div class="section-1">
+   <div class="image-section  image-scroll">
+  <img src="{% static 'shop/images/LAIKOU-Face-Care-Cream-Korean-Snail-White-Cream-Moisturizing-Anti-Aging-Acne-Anti-Wrinkle-Day-Cream.webp' %}" alt="" >
+   </div>
+   <div class="about-s  text-scroll">
+<h3>About us</h3>
+    <p>At Glisty Skincare, we believe that nature holds the key to truly healthy skin. Our mission is to provide gentle, effective, and natural skincare solutions for all skin types—whether you're dry, oily, sensitive, or a beautiful blend of them all.</p>
+
+<p>Every product is crafted with care, using plant-based ingredients, botanical extracts, and skin-loving minerals that work in harmony with your body. We avoid harsh chemicals and choose only the best of what nature and science have to offer.</p>
+
+<p>Our promise? Clean, cruelty-free, and consciously made skincare that supports your skin’s natural glow—because every skin type deserves to feel nourished, balanced, and radiant.</p>
+   </div>
+ </div>
+
+ <div class="section-2  text-top">
+   <h2> <span> <span>0</span>ur</span> Advantages</h2>
+    <div class="advantages">
+     <div class="advantage">
+      <i class='bx bxs-florist'></i>
+      <h3>Safe for All Skin Types</h3>
+      <p>Formulated to be gentle and non-irritating, our products are suitable for dry, oily, sensitive, acne-prone, and combination skin—so no one is left out.</p>
+     </div>
+          <div class="advantage">
+           <i class='bx bx-leaf'></i>
+           <h3>Made with Natural, Plant-Based Ingredients</h3>
+           <p>We harness the power of botanical extracts and minerals to nourish and restore skin—no harsh chemicals, parabens, or synthetic fragrances.</p>
+          </div>
+
+     <div class="advantage">
+      <i class='bx bx-child'></i>
+      <h3> Balanced by Science, Backed by Results</h3>
+      <p>Each formula is developed using dermatologist-approved actives(like hyaluronic acid, niacinamide, and vitamin C) that deliver visible results without compromising your skin’s natural barrier.</p>
+     </div>
+
+    </div>
+ </div>
+
+ <div class="section-4">
+  <h4> Blog </h4>
+  <div class="blog-section">
+       <i class='bx bx-chevron-right'></i>
+
+     <div class="blog-1">
+       <img src="{% static 'shop/images/blog1.jpg' %}" alt="" >
+      <h3><a href=""> Sleep and Skin Health</a></h3>
+     </div>
+
+      <div class="blog-1">
+        <img src="{% static 'shop/images/blog2.jpg' %}" alt="" >
+      <h3><a href=""> Benefits of Prunes for Skin Health
+</a></h3>
+     </div>
+
+      <div class="blog-1">
+        <img src="{% static 'shop/images/blog3.jpg' %}" alt="" >
+      <h3><a href=""> How To Care For The Skin</a></h3>
+     </div>
+      <div class="blog-1">
+        <img src="{% static 'shop/images/blog4.jpg' %}" alt="" >
+      <h3><a href=""> Healthy Diets </a></h3>
+     </div> 
+      <!-- <div class="blog-1"> 
+      <img src="images/home.jpg" alt="">
+      <h3><a href=""> How to stay healthy foar a long time</a></h3>
+     </div> -->
+  </div>
+ 
+
+  </div>
+ </div>
+
+    
+
+
+
+
+<div class="cart-container" id="cartContainer">
+    <h2 class="cart-title">Cart Items</h2>
+
+
+    <div class="cart-item">
+ 
+        <div class="cartitems ">
+    
+
+     </div>
+    </div>
+ 
+  
+    
+
+      <h5 id="total"> Total: $0.00</h5>
+    <!-- Add more items as needed -->
+  </div>
+
+
+
+</div>
+
+
+
+<!-- 🔐 Sign Up Modal -->
+<div id="signupModal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeModal('signupModal')">&times;</span>
+    <h2>Create an Account</h2>
+    <form class="signup-form">
+      <input type="text" placeholder="Full Name" required>
+      <input type="email" placeholder="Email Address" required>
+      <input type="password" placeholder="Password" required>
+      <button type="submit">Sign Up</button>
+    </form>
+    <p class="switch-link">Already have an account? <a href="#" id="toSignin">Log in</a></p>
+  </div>
+</div>
+
+<!-- 🔓 Sign In Modal -->
+<div id="signinModal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeModal('signinModal')">&times;</span>
+    <h2>Welcome Back</h2>
+    <form class="signup-form">
+      <input type="email" placeholder="Email Address" required>
+      <input type="password" placeholder="Password" required>
+      <button type="submit">Log In</button>
+    </form>
+    <p class="switch-link">Don't have an account? <a href="#" id="toSignup">Sign up</a></p>
+  </div>
+</div>
+
+
+
+
+ <footer class="footer-bottom">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <h5>Gli<span>sty</span></h5>
+        <p>Nurture your skin with nature. Clean, cruelty-free skincare designed to bring out your natural glow.</p>
+        <div class="footer-social">
+          <a href="#">🌿</a>
+          <a href="#">📘</a>
+          <a href="#">📸</a>
+          <a href="#">🐦</a>
+        </div>
+      </div>
+
+      <div class="footer-links">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="#">Shop</a></li>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Contact</a></li>
+          <li><a href="#">FAQs</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-newsletter">
+        <h3>Newsletter</h3>
+        <p>Get skincare tips & exclusive offers straight to your inbox.</p>
+        <form>
+          <input type="email" placeholder="Your email address" required />
+          <button type="submit">Subscribe</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      &copy; 2025 Glisty Skincare. All rights reserved.
+    </div>
+  </footer>
+
+
+
+ <script>
+
+  // Safe modal logic for signup/signin
+  document.addEventListener("DOMContentLoaded", () => {
+    const userIcon = document.getElementById('userIcon');
+    const signupModal = document.getElementById('signupModal');
+    const signinModal = document.getElementById('signinModal');
+
+    const toSignin = document.getElementById('toSignin');
+    const toSignup = document.getElementById('toSignup');
+
+    if (userIcon && signupModal) {
+      userIcon.addEventListener('click', () => {
+        signupModal.style.display = 'block';
+      });
+    }
+
+    if (toSignin && signupModal && signinModal) {
+      toSignin.addEventListener('click', (e) => {
+        e.preventDefault();
+        signupModal.style.display = 'none';
+        signinModal.style.display = 'block';
+      });
+    }
+
+    if (toSignup && signupModal && signinModal) {
+      toSignup.addEventListener('click', (e) => {
+        e.preventDefault();
+        signinModal.style.display = 'none';
+        signupModal.style.display = 'block';
+      });
+    }
+
+    window.addEventListener('click', (e) => {
+      if (e.target === signupModal) signupModal.style.display = 'none';
+      if (e.target === signinModal) signinModal.style.display = 'none';
+    });
+
+    // Scroll-trigger animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, index) => {
+        if (entry.isIntersecting) {
+          if (entry.target.classList.contains('product')) {
+            setTimeout(() => {
+              entry.target.classList.add('animate');
+            }, index * 200);
+          } else {
+            entry.target.classList.add('animate');
+          }
+        }
+      });
+    }, {
+      threshold: 0.5
+    });
+
+    const animatedElements = document.querySelectorAll(
+      '.image-scroll, .text-scroll, .text-top, .image-top, .product, .intro-text-scroll, .intro-image-scroll, .footer-bottom'
+    );
+
+    animatedElements.forEach(el => observer.observe(el));
+  });
+</script>
+
+
+
+
+   
+
+  
+</body>
+</html>
