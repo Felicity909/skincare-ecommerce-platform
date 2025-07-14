@@ -1,0 +1,214 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Checkout | Glisty Skincare</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #fdf8f5;
+      padding: 2rem;
+    }
+
+    .checkout-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      max-width: 1000px;
+      margin: auto;
+      background: #fff;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    }
+
+    .form-section,
+    .summary-section {
+      flex: 1;
+      min-width: 300px;
+    }
+
+    h2 {
+      margin-bottom: 1rem;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #555;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    .order-summary {
+      background-color: #fafafa;
+      padding: 1rem;
+      border-radius: 10px;
+      border: 1px solid #eee;
+    }
+
+    .order-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .total {
+      border-top: 1px solid #ddd;
+      padding-top: 10px;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+
+    button {
+      background-color: #df8c95;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    button:hover {
+      background-color: #c7737a;
+    }
+
+    .payment-methods {
+      margin-bottom: 1rem;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="checkout-container">
+    <!-- Left: User Details -->
+    <div class="form-section">
+      <h2>Shipping Details</h2>
+      {% if success %}
+        <div style="color: green; font-weight: bold;">Checkout successful! Thank you for your purchase.</div>
+      {% elif error %}
+        <div style="color: red; font-weight: bold;">No items in cart to checkout.</div>
+      {% else %}
+      <form id="checkoutForm" method="post" action="">
+        {% csrf_token %}
+        <label for="fullname">Full Name</label>
+        <input type="text" id="fullname" name="fullname" placeholder="e.g. Foriwaa Ceci" required>
+
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="email" placeholder="e.g. you@example.com" required>
+
+        <label for="address">Shipping Address</label>
+        <input type="text" id="address" name="address" placeholder="Street, City, Region" required>
+
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" name="phone" placeholder="e.g. +233 24 000 0000" required>
+
+        <h2>Payment Info</h2>
+
+        <label for="payment-method">Select Payment Method</label>
+        <select id="payment-method" name="payment_method" required>
+          <option value="">-- Select --</option>
+          <option value="momo">Mobile Money</option>
+          <option value="card">Credit/Debit Card</option>
+        </select>
+
+        <!-- MoMo Section -->
+        <div id="momo-section" class="hidden">
+          <label for="momo-network">Network</label>
+          <select id="momo-network" name="momo_network">
+            <option value="mtn">MTN</option>
+            <option value="vodafone">Vodafone</option>
+            <option value="airteltigo">AirtelTigo</option>
+          </select>
+
+          <label for="momo-number">MoMo Number</label>
+          <input type="tel" id="momo-number" name="momo_number" placeholder="e.g. 055 123 4567">
+        </div>
+
+        <!-- Card Section -->
+        <div id="card-section" class="hidden">
+          <label for="card-number">Card Number</label>
+          <input type="text" id="card-number" name="card_number" placeholder="1234 5678 9012 3456">
+
+          <label for="expiry">Expiry Date</label>
+          <input type="text" id="expiry" name="expiry" placeholder="MM/YY">
+
+          <label for="cvv">CVV</label>
+          <input type="text" id="cvv" name="cvv" placeholder="123">
+        </div>
+        <button type="submit">Complete Purchase</button>
+      </form>
+      {% endif %}
+    </div>
+
+    <!-- Right: Order Summary -->
+    <div class="summary-section">
+      <h2>Order Summary</h2>
+      <div class="order-summary">
+        {% if cart_items %}
+          {% for item in cart_items %}
+            <div class="order-item">
+              <span>{{ item.product.name }} (x{{ item.quantity }})</span>
+              <span>GHC {{ item.product.price|floatformat:2 }}</span>
+            </div>
+          {% endfor %}
+          <div class="total">
+            <span>Total</span>
+            <span><strong>GHC {{ total|floatformat:2 }}</strong></span>
+          </div>
+        {% else %}
+          <div>No items in cart.</div>
+        {% endif %}
+      </div>
+      <br />
+      <a href="{% url 'home' %}" style="display:block;text-align:center;margin-bottom:1rem;text-decoration:none;color:#df8c95;font-weight:bold;">&larr; Back to Home</a>
+      <button type="submit" form="checkoutForm">Complete Purchase</button>
+    </div>
+  </div>
+
+  <script>
+    const paymentSelect = document.getElementById('payment-method');
+    const momoSection = document.getElementById('momo-section');
+    const cardSection = document.getElementById('card-section');
+
+    paymentSelect.addEventListener('change', () => {
+      if (paymentSelect.value === 'momo') {
+        momoSection.classList.remove('hidden');
+        cardSection.classList.add('hidden');
+      } else if (paymentSelect.value === 'card') {
+        cardSection.classList.remove('hidden');
+        momoSection.classList.add('hidden');
+      } else {
+        momoSection.classList.add('hidden');
+        cardSection.classList.add('hidden');
+      }
+    });
+  </script>
+
+</body>
+</html>

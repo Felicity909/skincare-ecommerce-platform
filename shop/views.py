@@ -1,16 +1,83 @@
+from django.contrib import messages
+
+# Checkout page view (frontend)
+from django.contrib.auth.decorators import login_required
+@login_required
+def checkout_page(request):
+    user = request.user
+    order = Order.objects.filter(user=user, status='pending', payment_status='pending').order_by('-created_at').first()
+    cart_items = []
+    total = 0
+    if order:
+        cart_items = OrderItem.objects.filter(order=order)
+        total = sum(item.product.price * item.quantity for item in cart_items)
+
+    if request.method == 'POST':
+        # Mark order as completed
+        if order:
+            order.status = 'completed'
+            order.payment_status = 'paid'
+            order.save()
+            # Optionally clear cart items (if using Cart/CartItem model)
+            # CartItem.objects.filter(cart__user=user).delete()
+            messages.success(request, 'Checkout successful! Thank you for your purchase.')
+            return render(request, 'shop/checkout.html', {'cart_items': [], 'total': 0, 'success': True})
+        else:
+            messages.error(request, 'No items in cart to checkout.')
+            return render(request, 'shop/checkout.html', {'cart_items': [], 'total': 0, 'error': True})
+
+    return render(request, 'shop/checkout.html', {'cart_items': cart_items, 'total': total})
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+# Cart page view (frontend)
+@login_required
+def cart_page(request):
+    user = request.user
+    order = Order.objects.filter(user=user, status='pending', payment_status='pending').order_by('-created_at').first()
+    cart_items = []
+    total = 0
+    if order:
+        cart_items = OrderItem.objects.filter(order=order)
+        total = sum(item.product.price * item.quantity for item in cart_items)
+    return render(request, 'shop/cart.html', {'cart_items': cart_items, 'total': total})
+from django.shortcuts import render, get_object_or_404
+from .models import Product
+
+def product_detail(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    return render(request, 'shop/productdetails.html', {'product': product})
+from django.contrib.auth import authenticate, login
+from django.shortcuts import render, redirect
+# --- SIGN IN VIEW ---
+def signin_view(request):
+    error = None
+    if request.method == "POST":
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+        user = authenticate(request, username=email, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect("home")
+        else:
+            error = "Invalid email or password."
+    return render(request, "shop/signin.html", {"error": error})
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, generics, filters
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.generics import ListAPIView
 from django_filters.rest_framework import DjangoFilterBackend
-from .models import Product, Category, Order, OrderItem, Cart, CartItem
-from .serializers import OrderSerializer, CartSerializer, CartItemSerializer
+from .models import Product, Category, Order, OrderItem, Cart, CartItem, ContactMessage
+from .serializers import (
+    OrderSerializer, CartSerializer, CartItemSerializer, ProductSerializer,
+    UserSerializer, OrderHistorySerializer, ContactMessageSerializer
+)
 import json
+from django.views.generic import DetailView
 
 # Product List
 
@@ -246,7 +313,23 @@ from rest_framework import status
 from .models import Order, OrderItem, CartItem
 
 class CheckoutView(APIView):
-    permission_classes = [IsAuthenticated]
+    #permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        try:
+            # Fetch the latest pending order
+            order = Order.objects.filter(
+                user=request.user, status='pending', payment_status='pending'
+            ).order_by('-created_at').first()
+
+            if not order:
+                return Response({"error": "No pending order found."}, status=404)
+
+            serializer = OrderSerializer(order)
+            return Response(serializer.data, status=200)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
 
     def post(self, request):
         try:
@@ -262,7 +345,7 @@ class CheckoutView(APIView):
             order.payment_status = 'paid'
             order.save()
 
-            #  Clear user's cart after checkout
+            # Clear user's cart after checkout
             CartItem.objects.filter(cart__user=request.user).delete()
 
             return Response({"message": "Checkout successful!", "order_id": order.id}, status=200)
@@ -270,27 +353,16 @@ class CheckoutView(APIView):
         except Exception as e:
             return Response({"error": str(e)}, status=500)
 
-
 from rest_framework import generics, filters
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import Product
 from .serializers import ProductSerializer
 
-class ProductListView(generics.ListAPIView):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
-
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['category', 'price']
-    search_fields = ['name', 'description']
-    ordering_fields = ['price', 'name']
+class ProductListView(ListView):
+    model = Product
+    template_name = 'shop/productpage.html'
+    context_object_name = 'products'         # what you use
     
-    from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from .serializers import UserSerializer, OrderHistorySerializer
-from .models import Order
-
 class UserProfileView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -299,17 +371,10 @@ class UserProfileView(APIView):
         user_data = UserSerializer(user).data
         orders = Order.objects.filter(user=user)
         order_data = OrderHistorySerializer(orders, many=True).data
-
         return Response({
             "user": user_data,
             "orders": order_data
         })
-
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from .models import ContactMessage
-from .serializers import ContactMessageSerializer
 
 class ContactMessageView(APIView):
     def post(self, request):
@@ -323,7 +388,10 @@ class ContactMessageView(APIView):
             return Response({"message": "Message received!"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-from django.shortcuts import render
-
 def home(request):
-    return render(request, 'homepage.html')  # This is your frontend HTML file
+    return render(request, 'shop/homepage.html')  # Fixed template path
+
+class ProductDetailView(DetailView):
+    model = Product
+    template_name = 'shop/productdetails.html'
+    context_object_name = 'product'
