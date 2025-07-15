@@ -1,16 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.models import User
 from .models import Product, Category, Order, OrderItem, CartItem, ContactMessage
 
 # Homepage
-
 def home(request):
     return render(request, 'shop/homepage.html')
-# Sign In View
 
+# Sign In
 def signin_view(request):
     error = None
     if request.method == "POST":
@@ -19,13 +18,13 @@ def signin_view(request):
         user = authenticate(request, username=email, password=password)
         if user is not None:
             login(request, user)
+            messages.success(request, "Logged in successfully.")
             return redirect("home")
         else:
             error = "Invalid email or password."
     return render(request, "shop/signin.html", {"error": error})
 
-# Register View
-
+# Register
 def register_view(request):
     if request.method == "POST":
         username = request.POST.get("username")
@@ -40,26 +39,37 @@ def register_view(request):
 
     return render(request, "shop/register.html")
 
-# Product List View
+# Logout
+def logout_view(request):
+    logout(request)
+    messages.success(request, "Logged out successfully.")
+    return redirect("home")
 
+# Profile Page
+@login_required
+def profile_view(request):
+    orders = Order.objects.filter(user=request.user)
+    return render(request, "shop/profile.html", {
+        "user": request.user,
+        "orders": orders
+    })
+
+# Product List
 def product_list_view(request):
     products = Product.objects.all()
     return render(request, 'shop/productpage.html', {'products': products})
 
-# Product Detail View
-
+# Product Detail
 def product_detail_view(request, pk):
     product = get_object_or_404(Product, pk=pk)
     return render(request, 'shop/productdetails.html', {'product': product})
 
 # Category List
-
 def category_list_view(request):
     categories = Category.objects.all()
     return render(request, 'shop/category_list.html', {'categories': categories})
 
-# Cart Page View
-
+# Cart Page
 @login_required
 def cart_page(request):
     user = request.user
@@ -71,8 +81,7 @@ def cart_page(request):
         total = sum(item.product.price * item.quantity for item in cart_items)
     return render(request, 'shop/cart.html', {'cart_items': cart_items, 'total': total})
 
-# Add to Cart View
-
+# Add to Cart
 @login_required
 def add_to_cart_view(request):
     if request.method == "POST":
@@ -92,8 +101,7 @@ def add_to_cart_view(request):
         messages.success(request, "Product added to cart!")
     return redirect("product_list")
 
-# Remove from Cart View
-
+# Remove from Cart
 @login_required
 def remove_from_cart_view(request, product_id):
     try:
@@ -107,7 +115,6 @@ def remove_from_cart_view(request, product_id):
     return redirect("cart")
 
 # Checkout Page
-
 @login_required
 def checkout_page(request):
     user = request.user
@@ -132,22 +139,19 @@ def checkout_page(request):
 
     return render(request, 'shop/checkout.html', {'cart_items': cart_items, 'total': total})
 
-# User Orders View
-
+# Orders View
 @login_required
 def user_orders_view(request):
     orders = Order.objects.filter(user=request.user).order_by('-created_at')
     return render(request, "shop/order_history.html", {"orders": orders})
 
 # Order Detail View
-
 @login_required
 def order_detail_view(request, order_id):
     order = get_object_or_404(Order, id=order_id, user=request.user)
     return render(request, "shop/order_detail.html", {"order": order})
 
 # Update Payment View
-
 @login_required
 def update_payment_view(request, pk):
     order = get_object_or_404(Order, id=pk, user=request.user)
@@ -160,8 +164,7 @@ def update_payment_view(request, pk):
 
     return redirect("order_detail", order_id=pk)
 
-# Contact Message View
-
+# Contact View
 def contact_message_view(request):
     if request.method == "POST":
         content = request.POST.get("message")
@@ -176,13 +179,3 @@ def contact_message_view(request):
         messages.success(request, "Message received!")
         return redirect("contact")
     return render(request, "shop/contact.html")
-
-# User Profile View
-
-@login_required
-def profile_view(request):
-    orders = Order.objects.filter(user=request.user)
-    return render(request, "shop/profile.html", {
-        "user": request.user,
-        "orders": orders
-    })

@@ -1,0 +1,111 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Your Profile</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f8f8f8;
+            padding: 2em;
+        }
+
+        .profile-container {
+            max-width: 700px;
+            margin: 2em auto;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            padding: 2em;
+        }
+
+        h2 {
+            text-align: center;
+            color: #0f766e;
+        }
+
+        .user-info {
+            margin-bottom: 2em;
+        }
+
+        .user-info p {
+            margin: 0.4em 0;
+        }
+
+        .orders {
+            margin-top: 2em;
+        }
+
+        .orders table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .orders th, .orders td {
+            padding: 0.75em;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        .orders th {
+            background-color: #f0f0f0;
+        }
+
+        .logout-btn {
+            display: block;
+            margin: 1.5em auto;
+            padding: 0.7em 1.5em;
+            background-color: #e18048;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            text-align: center;
+            text-decoration: none;
+            font-weight: bold;
+            width: fit-content;
+        }
+
+        .logout-btn:hover {
+            background-color: #d16830;
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <h2>Welcome, {{ user.username }}</h2>
+
+        <div class="user-info">
+            <p><strong>Email:</strong> {{ user.email }}</p>
+            <p><strong>Date Joined:</strong> {{ user.date_joined|date:"F j, Y" }}</p>
+        </div>
+
+        <div class="orders">
+            <h3>Your Orders</h3>
+            {% if orders %}
+                <table>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Status</th>
+                        <th>Payment</th>
+                        <th>Date</th>
+                    </tr>
+                    {% for order in orders %}
+                    <tr>
+                        <td>{{ order.id }}</td>
+                        <td>{{ order.status }}</td>
+                        <td>{{ order.payment_status }}</td>
+                        <td>{{ order.created_at|date:"Y-m-d" }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            {% else %}
+                <p>You haven't placed any orders yet.</p>
+            {% endif %}
+        </div>
+
+        <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+    </div>
+</body>
+</html>

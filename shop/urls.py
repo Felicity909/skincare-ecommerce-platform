@@ -1,5 +1,6 @@
 from .views import *
 from django.urls import path
+
 urlpatterns = [
     path('', home, name='home'),
     path('products/', product_list_view, name='product_list'),
@@ -15,4 +16,5 @@ urlpatterns = [
     path('profile/', profile_view, name='profile'),
     path('register/', register_view, name='register'),
     path('signin/', signin_view, name='signin'),
+    path('logout/', logout_view, name='logout'),  # ✅ added logout route
 ]

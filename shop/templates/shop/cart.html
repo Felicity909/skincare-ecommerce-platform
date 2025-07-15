@@ -2,45 +2,56 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Cart</title>
-    <link rel="stylesheet" href="{% static 'shop/style.css' %}">
+  <meta charset="UTF-8">
+  <title>Your Cart</title>
+  <link rel="stylesheet" href="{% static 'shop/style.css' %}">
 </head>
 <body>
 <header>
-<nav>
- <a href="{% url 'home' %}">Home</a>
- <a href="{% url 'shop' %}">Shop</a>
- <a href="#">Blog</a>
- <a href="#">Products</a>
- <a href="#">About</a>
-</nav>
-<h5><span>Gli</span>sty</h5>
+  <nav>
+    <a href="{% url 'home' %}">Home</a>
+    <a href="{% url 'product_list' %}">Shop</a>
+    <a href="#">Blog</a>
+    <a href="#">Products</a>
+    <a href="#">About</a>
+  </nav>
+  <h5><span>Gli</span>sty</h5>
+
+  <div class="icons">
+    <a href="{% url 'cart' %}">
+      <i class='bx bx-cart addcart'>
+        <span>{{ cart_count|default:"0" }}</span>
+      </i>
+    </a>
+  </div>
 </header>
+
 <section class="container my-5 mt-5">
-    <h2>Your Cart</h2>
-    {% if cart_items %}
-    <ul>
-        {% for item in cart_items %}
-        <li>
-            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" style="width:60px;height:60px;vertical-align:middle;">
-            {{ item.product.name }} (x{{ item.quantity }}) - ${{ item.product.price }}
-            <form method="post" action="{% url 'remove-from-cart' %}" style="display:inline;">
-                {% csrf_token %}
-                <input type="hidden" name="product_id" value="{{ item.product.id }}">
-                <button type="submit">Remove</button>
-            </form>
-        </li>
-        {% endfor %}
+  <h2>Your Cart</h2>
+
+  {% if cart_items %}
+    <ul class="cart-list">
+      {% for item in cart_items %}
+      <li class="cart-item">
+        <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" style="width:60px;height:60px;">
+        <strong>{{ item.product.name }}</strong> (x{{ item.quantity }}) - ${{ item.product.price|floatformat:2 }}
+
+        <form method="post" action="{% url 'remove_from_cart' item.product.id %}" style="display:inline;">
+          {% csrf_token %}
+          <button type="submit">Remove</button>
+        </form>
+      </li>
+      {% endfor %}
     </ul>
-    <h4>Total: ${{ total }}</h4>
-    <form method="get" action="{% url 'checkout-page' %}">
-        <button type="submit">Checkout</button>
+
+    <h4>Total: ${{ total|floatformat:2 }}</h4>
+
+    <form method="get" action="{% url 'checkout' %}">
+      <button type="submit">Proceed to Checkout</button>
     </form>
-    {% else %}
+  {% else %}
     <p>Your cart is empty.</p>
-    {% endif %}
+  {% endif %}
 </section>
 </body>
 </html>

@@ -4,209 +4,182 @@
 <head>
  <meta charset="UTF-8">
  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-
+ <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
  <link rel="stylesheet" href="{% static 'style.css' %}">
  <title>Product Page</title>
-</head>
-<style>
- /*  */
+ <style>
+/* Layout container for all products */
+.section {
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
-  .section{
-     display: block;
-    
-  }
+/* Grid container */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 30px;
+  width: 100%;
+  max-width: 1200px;
+}
 
-   .cart-container.active {
-      transform: translateX(0);
-    }
-    .productandcarts{
-      display: flex;
-      gap: 30px;
-      margin-top: .4em;
-      align-items: center;
-      justify-content: space-between;
-    }
+/* Each product wrapper */
+.img-bx {
+  width: 100%;
+}
 
-   .productandcarts button{
-      background-color: blue;
-      border: 0;
-      color: white;
-      padding: .6em;
-      border-radius: 5px;
-    }
+/* Product box styling */
+.img-bx .box {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  padding: 20px;
+  text-align: center;
+  transition: transform 0.2s ease;
+  height: 100%;
+}
 
-    .productandcarts .cart{
-      background-color: #cc3366 ;
-    }
-    .productandcarts .BuyNow{
-      background-color: green;
-    }
-    .productandcarts .BuyNow a {
+.img-bx .box:hover {
+  transform: translateY(-5px);
+}
+
+/* Product image styling */
+.img-bx img#toSignup {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  cursor: pointer;
+  display: block;
+}
+
+/* Product name */
+.img-bx h4 {
+  font-size: 1.1rem;
+  color: #222;
+  margin: 10px 0;
+}
+
+/* Price and star section */
+.priceandcart {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px 0;
+}
+
+.priceandcart p {
+  font-weight: bold;
+  color: #cc6633;
+  font-size: 1rem;
+}
+
+/* Star icons */
+.staricons i {
+  color: #f5a623;
+  font-size: 1rem;
+}
+
+/* Buttons row */
+.productandcarts {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.productandcarts button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Cart & Buy Now button colors */
+.productandcarts .cart {
+  background-color: #cc3366;
+}
+
+.productandcarts .BuyNow {
+  background-color: #28a745;
+}
+
+.productandcarts .BuyNow a {
   text-decoration: none;
-         color: white;
-
-    }
-
-</style>
+  color: white;
+  display: block;
+}
+ </style>
+</head>
 <body>
 
-  <header>
+<header>
+  <nav>
+    <a href="{% url 'home' %}" class="active">Home</a>
+    <a href="{% url 'product_list' %}">Shop</a>
+    <a href="#">Blog</a>
+    <a href="{% url 'product_list' %}">Products</a>
+    <a href="#">About</a>
+  </nav>
+  <h5><span>Gli</span>sty</h5>
 
-<nav>
- <a href="{% url 'home' %}" class="active">Home</a>
-  <a href="{% url 'product_list' %}">shop</a>
- <a href="#">Blog</a>
- <a href="{% url 'product_list' %}">Products</a>
- <a href="#">about</a>
-</nav>
-   <h5><span>Gli</span>sty</h5>
-
-   <div class="icons">
+  <div class="icons">
     <i class='bx bx-search'></i>
-    <i id="cartToggle"  class='bx bx-cart addcart' ><span id="cartCount">0</span></i>
+    <i id="cartToggle" class='bx bx-cart addcart'><span id="cartCount">0</span></i>
     <i class='bx bx-sun'></i>
     <i class='bx bxs-user' id="userIcon"></i>
-   </div>
+  </div>
 </header>
 
-  <div class="section">
+<div class="section">
+  <form method="GET" class="search-form" style="margin-bottom: 20px; text-align: center;">
+  <input type="text" name="q" placeholder="Search products..." value="{{ request.GET.q }}" style="padding: 10px; width: 300px; border-radius: 8px; border: 1px solid #ccc;">
+  <button type="submit" style="padding: 10px 20px; border: none; background-color: #28a745; color: white; border-radius: 8px;">Search</button>
+</form>
+
   <div class="topic">
-      <h3>Product List</h3>
+    <h3>Product List</h3>
+    
   </div>
 
-  
-{% for product in products %}
-<div class="img-bx">
-  <div class="box">
-    <img src="{{ product.image.url }}" alt="{{ product.name }}" onclick="window.location.href='#'" id="toSignup">
-    <h4>{{ product.name }}</h4>
-    <div class="price">
-      <div class="priceandcart">
-        <p>${{ product.price }}</p>
-        <div class="staricons">
-          <i class='bx bxs-star'></i>
-          <i class='bx bxs-star'></i>
-          <i class='bx bxs-star'></i>
-          <i class='bx bxs-star'></i>
-          <i class='bx bxs-star'></i>
+  <!-- ✅ FIXED: Product Grid Wrapper -->
+  <div class="product-grid">
+    {% for product in products %}
+    <div class="img-bx">
+      <div class="box" data-name="{{ product.name }}" data-price="{{ product.price }}">
+        <img src="{{ product.image.url }}" alt="{{ product.name }}" onclick="window.location.href='#'" id="toSignup">
+        <h4>{{ product.name }}</h4>
+        <div class="price">
+          <div class="priceandcart">
+            <p>${{ product.price }}</p>
+            <div class="staricons">
+              <i class='bx bxs-star'></i>
+              <i class='bx bxs-star'></i>
+              <i class='bx bxs-star'></i>
+              <i class='bx bxs-star'></i>
+              <i class='bx bxs-star'></i>
+            </div>
+          </div>
+          <div class="productandcarts">
+            <button class="cart">Add to cart</button>
+            <button class="BuyNow"><a href="{% url 'checkout' %}">Buy Now</a></button>
+          </div>
         </div>
       </div>
-
-      <div class="productandcarts">
-        <button class="cart">Add to cart</button>
-        <button class="BuyNow"><a href="{% url 'checkout' %}">Buy Now</a></button>
-      </div>
     </div>
+    {% endfor %}
   </div>
 </div>
-{% endfor %}
 
- <!--  <div class="box "  >
-     <img src="{% static 'images/mensproduct.jpg' %}" alt=""  onclick="window.location.href='#'" id="toSignup">
-     <h4>Velvah Men's Grooming Kit</h4>
-    <div class="price">
-      <div class="priceandcart">
-         <p>$440</p>
-    <div class="staricons">
-         <i class='bx bxs-star'></i>
-      <i class='bx bxs-star'></i>
-      <i class='bx bxs-star'></i>
-      <i class='bx bxs-star'></i>
-      <i class='bx bxs-star'></i>
-             </div>       
-      
-      </div>
-     
-     <div class="productandcarts">
-      <button class="cart" >Add to cart</button>  
-       <button class="BuyNow" ><a href="checkout.html">Buy Now</a></button>
-     </div>
-      
-
-     </div>
-     </div>
-
-     <div class="box " >
-     <img src="{% static 'images/tonners.jpg' %}" alt=""  onclick="window.location.href='#'" id="toSignup">
-     <h4>Velvah Men's Grooming Kit </h4>
-     <div class="price">
-      <div class="priceandcart">
-         <p>$440</p>
-    <div class="staricons">
-         <i class='bx bxs-star'></i>
-      <i class='bx bxs-star'></i>
-      <i class='bx bxs-star'></i>
-      <i class='bx bxs-star'></i>
-      <i class='bx bxs-star'></i>
-             </div>       
-      
-      </div>
-     
-     <div class="productandcarts">
-      <button class="cart" >Add to cart</button>  
-       <button class="BuyNow" ><a href="checkout.html">Buy Now</a></button>
-     </div>
-      
-
-     </div>
-     </div>
-
-     <div class="box" >
-     <img src="{% static 'images/soap.jpg' %}" alt=""   onclick="window.location.href='#'" id="toSignup">
-     <h4>
-      Monarch Cinnabari Skincare</h4>
-     <div class="price">
-      <div class="priceandcart">
-         <p>$440</p>
-    <div class="staricons">
-         <i class='bx bxs-star'></i>
-      <i class='bx bxs-star'></i>
-      <i class='bx bxs-star'></i>
-      <i class='bx bxs-star'></i>
-      <i class='bx bxs-star'></i>
-             </div>       
-      
-      </div>
-     
-     <div class="productandcarts">
-      <button class="cart" >Add to cart</button>  
-       <button class="BuyNow" ><a href="checkout.html">Buy Now</a></button>
-     </div>
-      
-
-     </div>
-     </div>
-
-     <div class="box" >
-     <img src="{% static 'images/scrapingbag.jpg' %}" alt=""  onclick="window.location.href='#'" id="toSignup">
-     <h4>Lorem ipsum dolor </h4>
-    <div class="price">
-      <div class="priceandcart">
-         <p>$440</p>
-    <div class="staricons">
-         <i class='bx bxs-star'></i>
-      <i class='bx bxs-star'></i>
-      <i class='bx bxs-star'></i>
-      <i class='bx bxs-star'></i>
-      <i class='bx bxs-star'></i>
-             </div>       
-      
-      </div>
-     
-     <div class="productandcarts">
-      <button class="cart" >Add to cart</button>  
-       <button class="BuyNow" ><a href="checkout.html">Buy Now</a></button>
-     </div>
-      
-
-     </div>
-     </div>
-      </div>-->
-
-
-  <!-- Add to  cart container -->
- <div class="cart-container" id="cartContainer" style="display: none;">
+<!-- Add to cart container -->
+<div class="cart-container" id="cartContainer" style="display: none;">
   <h2 class="cart-title">Cart Items</h2>
   <div class="cart-item">
     <div class="cartitems" id="cartItemsList">
@@ -216,49 +189,49 @@
   <h5 id="total">Total: $0.00</h5>
 </div>
 
-
- <footer>
-    <div class="footer-container">
-      <div class="footer-brand">
-        <h5>Gli<span>sty</span></h5>
-        <p>Nurture your skin with nature. Clean, cruelty-free skincare designed to bring out your natural glow.</p>
-        <div class="footer-social">
-          <a href="#">🌿</a>
-          <a href="#">📘</a>
-          <a href="#">📸</a>
-          <a href="#">🐦</a>
-        </div>
-      </div>
-
-      <div class="footer-links">
-        <h3>Quick Links</h3>
-        <ul>
-          <li><a href="#">Shop</a></li>
-          <li><a href="#">About Us</a></li>
-          <li><a href="#">Blog</a></li>
-          <li><a href="#">Contact</a></li>
-          <li><a href="#">FAQs</a></li>
-        </ul>
-      </div>
-
-      <div class="footer-newsletter">
-        <h3>Newsletter</h3>
-        <p>Get skincare tips & exclusive offers straight to your inbox.</p>
-        <form>
-          <input type="email" placeholder="Your email address" required />
-          <button type="submit">Subscribe</button>
-        </form>
+<footer>
+  <div class="footer-container">
+    <div class="footer-brand">
+      <h5>Gli<span>sty</span></h5>
+      <p>Nurture your skin with nature. Clean, cruelty-free skincare designed to bring out your natural glow.</p>
+      <div class="footer-social">
+        <a href="#">🌿</a>
+        <a href="#">📘</a>
+        <a href="#">📸</a>
+        <a href="#">🐦</a>
       </div>
     </div>
 
-    <div class="footer-bottom">
-      &copy; 2025 Glisty Skincare. All rights reserved.
+    <div class="footer-links">
+      <h3>Quick Links</h3>
+      <ul>
+        <li><a href="#">Shop</a></li>
+        <li><a href="#">About Us</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">Contact</a></li>
+        <li><a href="#">FAQs</a></li>
+      </ul>
     </div>
-  </footer>
-   <script>
+
+    <div class="footer-newsletter">
+      <h3>Newsletter</h3>
+      <p>Get skincare tips & exclusive offers straight to your inbox.</p>
+      <form>
+        <input type="email" placeholder="Your email address" required />
+        <button type="submit">Subscribe</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    &copy; 2025 Glisty Skincare. All rights reserved.
+  </div>
+</footer>
+
+<script>
   const cartToggle = document.getElementById("cartToggle");
   const cartContainer = document.getElementById("cartContainer");
-  const cartItemsDiv = document.querySelector('.cartitems'); // should match your container
+  const cartItemsDiv = document.querySelector('.cartitems');
   const cartCountSpan = document.getElementById('cartCount'); 
   const totalDisplay = document.getElementById('total');
   const addToCartButtons = document.querySelectorAll('.cart');
@@ -266,20 +239,17 @@
   let cart = [];
   let count = 0;
 
-  // Show/hide cart when clicking icon
   cartToggle.addEventListener("click", () => {
     const isVisible = cartContainer.style.display === "block";
     cartContainer.style.display = isVisible ? "none" : "block";
   });
 
-  // Close cart when clicking outside
   window.addEventListener("click", (e) => {
     if (!cartContainer.contains(e.target) && e.target !== cartToggle) {
       cartContainer.style.display = "none";
     }
   });
 
-  // Add to cart logic
   addToCartButtons.forEach(button => {
     button.addEventListener('click', () => {
       const productBox = button.closest('.box');
@@ -299,7 +269,6 @@
     });
   });
 
-  // Update cart item list and total
   function updateCartDisplay() {
     cartItemsDiv.innerHTML = '';
     let total = 0;
@@ -321,6 +290,5 @@
   }
 </script>
 
- 
 </body>
 </html>

@@ -18,5 +18,13 @@
         </form>
         <p style="text-align:center;margin-top:1em;">Don't have an account? <a href="{% url 'register' %}">Register here</a></p>
     </div>
+    {% if messages %}
+  <ul style="margin: 1em auto; max-width: 700px; padding: 1em; background: #d1fae5; color: #065f46; border: 1px solid #10b981; border-radius: 6px;">
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
 </body>
 </html>

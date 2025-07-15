@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register</title>
+  <link rel="stylesheet" href="{% static 'style.css' %}" />
+</head>
+<body>
+  <div class="container" style="max-width:400px;margin:3em auto;padding:2em;background:#fff;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,0.1);">
+    <h2 style="text-align:center;">Register</h2>
+
+    {% if messages %}
+      <ul style="color: red;">
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    <form method="post">
+      {% csrf_token %}
+      <input type="text" name="username" placeholder="Username" required style="width:100%;padding:.7em;margin-bottom:1em;">
+      <input type="password" name="password" placeholder="Password" required style="width:100%;padding:.7em;margin-bottom:1em;">
+      <button type="submit" style="width:100%;padding:.7em;background:#0f766e;color:#fff;border:none;border-radius:5px;">Register</button>
+    </form>
+    <p style="text-align:center;margin-top:1em;">Already have an account? <a href="{% url 'signin' %}">Sign in here</a></p>
+  </div>
+</body>
+</html>
