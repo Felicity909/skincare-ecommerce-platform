@@ -9,7 +9,6 @@ from .models import Product, Category, Order, OrderItem, CartItem, ContactMessag
 
 def home(request):
     return render(request, 'shop/homepage.html')
-
 # Sign In View
 
 def signin_view(request):
